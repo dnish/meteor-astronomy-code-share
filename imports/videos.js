@@ -1,22 +1,31 @@
-
+import { Class } from 'meteor/jagi:astronomy';
+import {Comment} from "./comments";
 
 const Videos = new Mongo.Collection('videos');
 
 
-const videoObj = {
-    name: 'Video',
-    collection: Videos,
-    fields: {
-        name: {
-            type: String
-        }
-    },
+const Video = Class.create(
+    {
+        name: 'Video',
+        collection: Videos,
+        fields: {
+            name: {
+                type: String
+            },
+            comments: {
+                type: [Object],
+                transient: true
+            }
+        },
 
-    helpers: {
-        canRelease() {
-            return Video.find({name}).count() < 1;
+        events: {
+
+            afterInit(e) {
+                const doc = e.target;
+                doc.comments = Comment.findOne();
+            }
         }
     }
-};
+);
 
-export {videoObj};
+export {Video};
